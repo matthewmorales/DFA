@@ -17,7 +17,6 @@ print_table(t_table)
 
 final = {}
 non_final = {}
-dfa_complete = {}
 
 for items in t_table:
 	if t_table.get(items)[0] == "*" :
