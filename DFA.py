@@ -25,7 +25,6 @@ for items in t_table:
 	else:
 		non_final[items] = t_table.get(items)
 
-
 def distinguishable(test_group, final):
 	
 	while test_group:
@@ -62,11 +61,5 @@ def distinguishable(test_group, final):
 	return final
 
 dfa_min = distinguishable(non_final, final)
-
-
-
-
-
-
 
 print_table(dfa_min)
