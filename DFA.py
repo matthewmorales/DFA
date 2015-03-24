@@ -7,11 +7,11 @@ t_table = {'q0' : [">", "q1", "q3", 0], 'q1' : ["i", "q2", "q4", 1], 'q2' : ["i"
 def print_table(t_table):
 	for item in t_table:
 		if t_table.get(item)[0] == ">":
-			print("%s %s : %s" % (t_table.get(item)[0], t_table.get(item)[1], t_table.get(item)[2]))
+			print("%s|  %s %s : %s" % (item, t_table.get(item)[0], t_table.get(item)[1], t_table.get(item)[2]))
 		elif t_table.get(item)[0] == "*":
-			print("%s %s : %s" % (t_table.get(item)[0], t_table.get(item)[1], t_table.get(item)[2]))
+			print("%s|  %s %s : %s" % (item, t_table.get(item)[0], t_table.get(item)[1], t_table.get(item)[2]))
 		else:
-			print("  %s : %s" % (t_table.get(item)[1], t_table.get(item)[2]))
+			print("%s|    %s : %s" % (item, t_table.get(item)[1], t_table.get(item)[2]))
 
 print_table(t_table)
 
@@ -56,6 +56,32 @@ def distinguishable(test_group, final):
 				print("Popping indistinguishable state: %s" % (pops))
 				test_group.pop(pops)
 		final[item] = test_a.pop(item)
+
+	poppable_entries = []
+	#explicitly equal states taken care of above, states with equivalent looping patterns dealt with below
+	for state in final:
+		for entry in final:
+			if state != entry:
+				#making sure not to check a state against itself, thus popping a potentially distinguished state
+				if final[state][1] == entry and final[entry][1] == state and final[entry][2] == final[state][2]:
+					print ("State: %s" % (state))
+					print ("Entry: %s" % (entry))
+					#the states loop back on each other and can be combined.
+					if state not in poppable_entries:
+						poppable_entries.append(entry)
+						#remove references to states slated for removal
+						if final[state][1] == entry:
+							final[state][1] = state
+						if final[state][2] == entry:
+							final[state][2] = state
+				if final[state][2] == entry and final[entry][2] == state and final[entry][1] == final[state][1]:
+					#states loop back on each other
+					if state not in poppable_entries:
+						poppable_entries.append(entry)
+
+	for pops in poppable_entries:
+		print("Popping indistinguishable state: %s" % (pops))
+		final.pop(pops)
 
 	return final
 
