@@ -2,7 +2,25 @@ import random
 
 # ">" corresponds to an input state, the following integers correspond to a transition based on 0, 1 input, the final number is just a State Number Used for recombining the table.
 # "*" corresponds to a final state
-t_table = {'q0' : [">", "q1", "q3", 0], 'q1' : ["i", "q2", "q4", 1], 'q2' : ["i", "q1", "q4", 2], 'q3' : ["i", "q2", "q4", 3], 'q4' : ["*", "q4", "q4", 4]}
+def read_transition_file():
+	transition_table = open("transition.txt","r")
+	lines = transition_table.readlines()
+	transition_table.close()
+
+	state_list = []
+	table = {}
+
+	for line in lines:
+		state_list.append(line.rstrip('\n').split('|'))
+
+	print 'q' + state_list[0][3]
+
+	for entry in state_list:
+		for x in range(1, 3):
+			entry[x] = 'q' + entry[x]
+		table['q' + entry[3]] = entry
+
+	return table
 
 def print_table(t_table):
 	for item in t_table:
@@ -12,17 +30,6 @@ def print_table(t_table):
 			print("%s|  %s %s : %s" % (item, t_table.get(item)[0], t_table.get(item)[1], t_table.get(item)[2]))
 		else:
 			print("%s|    %s : %s" % (item, t_table.get(item)[1], t_table.get(item)[2]))
-
-print_table(t_table)
-
-final = {}
-non_final = {}
-
-for items in t_table:
-	if t_table.get(items)[0] == "*" :
-		final[items] = t_table.get(items)
-	else:
-		non_final[items] = t_table.get(items)
 
 def distinguishable(test_group, final):
 	
@@ -64,8 +71,8 @@ def distinguishable(test_group, final):
 			if state != entry:
 				#making sure not to check a state against itself, thus popping a potentially distinguished state
 				if final[state][1] == entry and final[entry][1] == state and final[entry][2] == final[state][2]:
-					print ("State: %s" % (state))
-					print ("Entry: %s" % (entry))
+					#print ("State: %s" % (state))
+					#print ("Entry: %s" % (entry))
 					#the states loop back on each other and can be combined.
 					if state not in poppable_entries:
 						poppable_entries.append(entry)
@@ -84,6 +91,19 @@ def distinguishable(test_group, final):
 		final.pop(pops)
 
 	return final
+
+t_table = read_transition_file()
+print_table(t_table)
+
+final = {}
+non_final = {}
+
+# splitting states based on accepting ('final') states and rejecting ('non_final') states
+for items in t_table:
+	if t_table.get(items)[0] == "*" :
+		final[items] = t_table.get(items)
+	else:
+		non_final[items] = t_table.get(items)
 
 dfa_min = distinguishable(non_final, final)
 
