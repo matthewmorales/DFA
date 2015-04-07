@@ -13,7 +13,7 @@ def read_transition_file():
 	for line in lines:
 		state_list.append(line.rstrip('\n').split('|'))
 
-	print 'q' + state_list[0][3]
+	#print 'q' + state_list[0][3] #just testing the concatenation of q + state
 
 	for entry in state_list:
 		for x in range(1, 3):
